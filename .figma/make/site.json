@@ -1,0 +1,10 @@
+{
+  "description": "Facilitates seamless task delegation and management, helping users efficiently assign and track responsibilities to boost productivity.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
