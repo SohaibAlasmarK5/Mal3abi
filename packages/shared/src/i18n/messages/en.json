@@ -6,7 +6,7 @@
   "home": {
     "title": "Mal3abi",
     "subtitle": "Find an available court and book it in a few steps.",
-    "status": "The API connection is ready on mock data. Next: the site frame.",
+    "status": "The site frame is ready: header, menu, footer and role-based page protection.",
     "reviewLink": "Language review page",
     "componentsLink": "Component review page",
     "apiLink": "API review page"
@@ -218,5 +218,72 @@
       "booked": "Booked",
       "closed": "Closed"
     }
+  },
+  "shell": {
+    "brand": "Mal3abi",
+    "home": "Mal3abi home page",
+    "mainNav": "Main menu",
+    "skipToContent": "Skip to content",
+    "nav": {
+      "courts": "Courts",
+      "matches": "Open matches",
+      "bookings": "My bookings",
+      "owners": "For court owners"
+    },
+    "search": {
+      "label": "Quick search",
+      "placeholder": "Search for a court or area",
+      "submit": "Search"
+    },
+    "menu": {
+      "open": "Open menu",
+      "title": "Menu"
+    },
+    "account": {
+      "menu": "Account menu",
+      "myAccount": "My account",
+      "myBookings": "My bookings",
+      "ownerDashboard": "Owner dashboard",
+      "adminDashboard": "Admin dashboard"
+    },
+    "footer": {
+      "tagline": "Football and padel court booking in Jordan.",
+      "explore": "Explore",
+      "help": "Help",
+      "contact": "Contact us",
+      "privacy": "Privacy policy",
+      "terms": "Terms and conditions",
+      "rights": "© {year} Mal3abi. All rights reserved."
+    },
+    "comingSoon": "This page is built in a later task.",
+    "pages": {
+      "courts": "Courts",
+      "matches": "Open matches",
+      "bookings": "My bookings",
+      "owners": "For court owners",
+      "owner": "Owner dashboard",
+      "admin": "Admin dashboard",
+      "account": "My account",
+      "privacy": "Privacy policy",
+      "terms": "Terms and conditions",
+      "contact": "Contact us"
+    },
+    "notFound": {
+      "metaTitle": "Page not found",
+      "title": "We could not find this page",
+      "body": "The page may have moved, or the link is not correct.",
+      "home": "Back to the home page"
+    },
+    "error": {
+      "title": "Something went wrong",
+      "body": "We could not show this page. Try again, and if it keeps happening, come back later.",
+      "retry": "Try again"
+    },
+    "notAuthorized": {
+      "title": "You do not have access to this page",
+      "body": "This page is for a different type of account. If you think this is a mistake, contact us.",
+      "home": "Back to the home page"
+    },
+    "redirecting": "Taking you to sign in"
   }
 }

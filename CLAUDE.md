@@ -2,7 +2,7 @@
 
 Website (and later the mobile app) for Mal3abi, a court booking platform for Jordan (football and padel to start). Three roles: player, court owner, super admin.
 
-This repo was rebuilt from scratch on branch `KAN-5-project-setup`. The old Vite/Figma frontend is in git history on `main`; do not bring any of it back.
+This repo was rebuilt from scratch (KAN-5). The old Vite/Figma frontend is only in git history, before commit d6f5ad1; do not bring any of it back.
 
 ## Structure
 
@@ -37,12 +37,15 @@ CI (`.github/workflows/ci.yml`) runs format check, typecheck, lint, test and bui
 - **Theme toggle:** `ThemeToggle` (`@/components/theme-toggle`). The script in the layout `<head>` (`@/lib/theme`) sets `data-theme` before paint from the saved choice or the system setting, so there is no flash. Use the `dark:` variant only when a token cannot express it.
 - **Components:** use the ones in `apps/web/src/components/ui` (button, input/field, select, checkbox, tabs, dialog, alert, card, status-badge, table, calendar, time-picker, image-upload, states) instead of new one-off styles. Review page: `/ar/dev/components` (development only).
 - **Numbers in messages:** pass numbers to `t()` as strings (`String(n)`), because ICU number arguments would print Arabic-Indic digits.
+- **Site frame:** public and account pages live in `apps/web/src/app/[locale]/(site)/`, whose layout adds the header (logo, links, quick search, dashboard link by role, language and theme toggles, account menu; a side menu below 1024px) and the footer. Internal `/dev/*` pages sit outside it. Shell parts are in `apps/web/src/components/shell`.
+- **Protected pages:** wrap them in a `layout.tsx` with `<RequireRole roles={[...]}>` (no roles: any signed-in user; admins pass every check). Signed out goes to sign-in and back; the wrong role sees "not authorized". The backend checks every request again.
+- **Error pages:** unknown addresses hit `(site)/[...rest]` and show `(site)/not-found.tsx`; render crashes show `(site)/error.tsx`; `app/global-error.tsx` is the bilingual last resort. Pages that later tasks build use `placeholderPage()` until then, so every link works.
 - **Shape:** 10px radius on buttons and inputs (`rounded-control`), 14-16px on cards (`rounded-card`), 1px borders, no shadows or gradients, controls at least 44px tall (`h-control`).
 - **Data:** every backend call goes through the client generated from the OpenAPI contract: TanStack Query hooks from `@mal3abi/shared/api` (for example `useSearchCourts`, `useCreateBooking`). ESLint blocks `fetch` and axios in app code.
   - Contract: `packages/shared/openapi/mal3abi.yaml`. It is a **temporary** contract written from the product reference until Mal3abi.BE publishes its own; then replace the file with the backend's swagger.json. After any change run `pnpm gen:api` (orval) and commit `packages/shared/src/api/generated`. CI fails if it is out of date; never edit generated files.
   - All requests pass through `packages/shared/src/api/fetcher.ts` (`apiFetch`). The web app configures it in `apps/web/src/lib/api.ts`.
   - The browser calls `/api/...` on this site; `next.config.ts` proxies it to `API_BASE_URL` (Mal3abi.BE), so the session cookie stays first-party.
-  - Mock data: `NEXT_PUBLIC_API_MOCKING=enabled` answers requests in the browser from `packages/shared/src/api/mocks` (MSW handlers, no service worker). The data is typed with the generated types, so contract changes break the build there too. Switch the mock account at `/ar/dev/sign-in`; review page `/ar/dev/api`.
+  - Mock data (development only; production builds ignore it): `NEXT_PUBLIC_API_MOCKING=enabled` answers requests in the browser from `packages/shared/src/api/mocks` (MSW handlers, no service worker). The data is typed with the generated types, so contract changes break the build there too. Switch the mock account at `/ar/dev/sign-in`; review page `/ar/dev/api`.
 - **Sessions:** HttpOnly cookie from the backend; the website stores no tokens. `useSession()`, `useSignIn()`, `useSignOut()`, `hasRole()` from `@/lib/session`. The CSRF token (cookie `XSRF-TOKEN`, or `GET /api/auth/csrf`) is sent as `X-CSRF-TOKEN` on every request that changes data, and refreshed once on `csrf_invalid`.
 - **Errors:** the API throws `ApiError` with a stable `code`. 401 (except `/api/auth/me`) sends the user to sign-in and back; `email_not_verified` goes to `/[locale]/verify-email`; everything else shows `useErrorMessage()(error)` from `@/lib/api-errors` in the user's language. Never show the backend's English text.
 - **Forms:** react-hook-form + zod. UI validation is always also enforced on the server.

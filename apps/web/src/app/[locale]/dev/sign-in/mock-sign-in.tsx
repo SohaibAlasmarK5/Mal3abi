@@ -4,12 +4,7 @@ import { mockRoles, setMockRole, type MockRole } from "@mal3abi/shared/api/mocks
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-/** Only same-site paths, so the return link cannot send people to another website. */
-function safeReturnTo(fallback: string): string {
-  const value = new URLSearchParams(window.location.search).get("returnTo");
-  return value && value.startsWith("/") && !value.startsWith("//") ? value : fallback;
-}
+import { safeReturnTo } from "@/lib/safe-return";
 
 export function MockSignIn() {
   const t = useTranslations("devSignIn");
@@ -17,7 +12,8 @@ export function MockSignIn() {
 
   function choose(role: MockRole) {
     setMockRole(role);
-    window.location.assign(safeReturnTo(`/${locale}`));
+    const returnTo = new URLSearchParams(window.location.search).get("returnTo");
+    window.location.assign(safeReturnTo(returnTo, window.location.origin, `/${locale}`));
   }
 
   return (

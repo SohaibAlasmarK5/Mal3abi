@@ -38,8 +38,9 @@ export function verifyEmailUrl(returnTo = currentPath()): string {
 }
 
 function handleError(error: ApiError, request: { url: string }) {
-  // Asking "who is signed in" is allowed to answer 401: that just means signed out.
-  if (error.code === "unauthorized" && !request.url.startsWith("/api/auth/me")) {
+  // "Who is signed in" may answer 401 (that just means signed out), and so may signing out.
+  const quiet = ["/api/auth/me", "/api/auth/logout"].some((path) => request.url.startsWith(path));
+  if (error.code === "unauthorized" && !quiet) {
     window.location.assign(signInUrl());
   } else if (error.code === "email_not_verified") {
     window.location.assign(verifyEmailUrl());
