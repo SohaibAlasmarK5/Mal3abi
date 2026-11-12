@@ -7,12 +7,14 @@
     ".": "./src/index.ts",
     "./i18n": "./src/i18n/index.ts",
     "./messages/*": "./src/i18n/messages/*",
+    "./tokens": "./src/tokens/index.ts",
     "./tokens/theme.css": "./src/tokens/theme.css"
   },
   "scripts": {
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "gen:tokens": "node scripts/gen-tokens.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

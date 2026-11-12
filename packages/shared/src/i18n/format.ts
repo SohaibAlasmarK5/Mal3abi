@@ -53,6 +53,17 @@ export function formatShortDate(date: Date, locale: Locale): string {
   }).format(date);
 }
 
+/** A wall-clock time with no date, for example "17:30" -> "5:30 م" or "5:30 pm". */
+export function formatClock(value: string, locale: Locale): string {
+  const [hours = 0, minutes = 0] = value.split(":").map(Number);
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    timeZone: "UTC",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(Date.UTC(1970, 0, 1, hours, minutes)));
+}
+
 /** Clock time on a 12-hour clock, for example "5:30 م" or "5:30 pm". */
 export function formatTime(date: Date, locale: Locale): string {
   return new Intl.DateTimeFormat(intlLocale(locale), {

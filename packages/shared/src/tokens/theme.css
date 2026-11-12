@@ -1,9 +1,7 @@
-/*
- * Mal3abi theme tokens: the single source of the platform colors.
- * Light mode = "green" theme, dark mode = "dark" theme (docs/ui-brief.md).
- * The accent color is for buttons and primary actions only.
- */
-:root {
+/* Generated from tokens.ts by `pnpm --filter @mal3abi/shared gen:tokens`. Do not edit. */
+
+:root,
+[data-theme="light"] {
   --bg: #f5f7f4;
   --surface: #ffffff;
   --ink: #13201a;
@@ -13,6 +11,9 @@
   --accent-ink: #ffffff;
   --accent-soft: #e3f2ea;
   --accent-2: #c98a12;
+  --warning-soft: #fbf1dc;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
 
   --radius-control: 10px;
   --radius-card: 16px;
@@ -21,7 +22,7 @@
   color-scheme: light;
 }
 
-:root[data-theme="dark"] {
+[data-theme="dark"] {
   --bg: #0e1316;
   --surface: #172026;
   --ink: #e9eef1;
@@ -31,23 +32,9 @@
   --accent-ink: #08140e;
   --accent-soft: #13342a;
   --accent-2: #e9b44c;
+  --warning-soft: #3a2e12;
+  --danger: #f97066;
+  --danger-soft: #3a1d1b;
 
   color-scheme: dark;
-}
-
-/* First visit, no saved choice yet: follow the system setting. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e1316;
-    --surface: #172026;
-    --ink: #e9eef1;
-    --muted: #9ba8b2;
-    --line: #26313a;
-    --accent: #34c98a;
-    --accent-ink: #08140e;
-    --accent-soft: #13342a;
-    --accent-2: #e9b44c;
-
-    color-scheme: dark;
-  }
 }

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { formatDate, formatNumber, formatPrice, formatShortDate, formatTime } from "./format";
+import {
+  formatClock,
+  formatDate,
+  formatNumber,
+  formatPrice,
+  formatShortDate,
+  formatTime,
+} from "./format";
 
 // 12 Nov 2026, 17:30 in Amman (UTC+3).
 const sample = new Date("2026-11-12T14:30:00Z");
@@ -25,5 +32,11 @@ describe("formatting", () => {
     expect(formatTime(sample, "en")).toBe("5:30 pm");
     expect(formatTime(sample, "ar")).toContain("5:30");
     expect(formatDate(sample, "ar")).toContain("2026");
+  });
+
+  it("formats wall-clock times without a date", () => {
+    expect(formatClock("17:30", "en")).toBe("5:30 pm");
+    expect(formatClock("06:00", "en")).toBe("6:00 am");
+    expect(formatClock("17:30", "ar")).toContain("5:30");
   });
 });

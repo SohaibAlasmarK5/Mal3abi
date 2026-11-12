@@ -1,5 +1,6 @@
 import { useLocale } from "next-intl";
 import {
+  formatClock,
   formatDate,
   formatNumber,
   formatPrice,
@@ -16,6 +17,7 @@ export function formatterFor(locale: Locale) {
     date: (date: Date) => formatDate(date, locale),
     shortDate: (date: Date) => formatShortDate(date, locale),
     time: (date: Date) => formatTime(date, locale),
+    clock: (value: string) => formatClock(value, locale),
   };
 }
 

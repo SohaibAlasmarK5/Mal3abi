@@ -32,6 +32,10 @@ CI (`.github/workflows/ci.yml`) runs format check, typecheck, lint, test and bui
 - Modern Standard Arabic copy. **No emojis anywhere.**
 - **Fonts:** IBM Plex Sans Arabic and IBM Plex Sans, through `next/font`.
 - **Theme:** light = "green", dark = "dark". Colors come only from the tokens in `packages/shared/src/tokens/theme.css` (Tailwind: `bg-bg`, `bg-surface`, `text-ink`, `text-muted`, `border-line`, `bg-accent`, `text-accent-ink`, `bg-accent-soft`, `text-accent-2`). Never write a hex color in a component. The accent is for buttons and primary actions only.
+- **Tokens:** the single source is `packages/shared/src/tokens/tokens.ts` (also for the mobile app). After changing a value run `pnpm --filter @mal3abi/shared gen:tokens` to regenerate `theme.css`; a test fails if it is out of date, and another checks 4.5:1 text contrast in both modes. Extra colors beyond the brief: `warning-soft`, `danger`, `danger-soft`.
+- **Theme toggle:** `ThemeToggle` (`@/components/theme-toggle`). The script in the layout `<head>` (`@/lib/theme`) sets `data-theme` before paint from the saved choice or the system setting, so there is no flash. Use the `dark:` variant only when a token cannot express it.
+- **Components:** use the ones in `apps/web/src/components/ui` (button, input/field, select, checkbox, tabs, dialog, alert, card, status-badge, table, calendar, time-picker, image-upload, states) instead of new one-off styles. Review page: `/ar/dev/components` (development only).
+- **Numbers in messages:** pass numbers to `t()` as strings (`String(n)`), because ICU number arguments would print Arabic-Indic digits.
 - **Shape:** 10px radius on buttons and inputs (`rounded-control`), 14-16px on cards (`rounded-card`), 1px borders, no shadows or gradients, controls at least 44px tall (`h-control`).
 - **Data:** every backend call goes through the client generated from the Mal3abi.BE OpenAPI contract (TanStack Query). No hand-written fetch calls. MSW mock data until the contract exists.
 - **Sessions:** HttpOnly cookie from the backend; the website stores no tokens. Send the CSRF token on every request that changes data.
