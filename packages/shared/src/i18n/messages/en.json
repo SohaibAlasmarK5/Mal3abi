@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "title": "Mal3abi",
+    "description": "Book a football or padel court in Jordan in a few steps."
+  },
+  "home": {
+    "title": "Mal3abi",
+    "subtitle": "Find an available court and book it in a few steps.",
+    "status": "The project is ready. Next: languages and the design system.",
+    "switchLanguage": "العربية"
+  }
+}

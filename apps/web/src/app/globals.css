@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@mal3abi/shared/tokens/theme.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Map the shared tokens to Tailwind utilities: bg-bg, text-ink, bg-accent, ... */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-2: var(--accent-2);
+
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+  --spacing-control: var(--control-height);
+
+  --font-sans: var(--font-plex-arabic), var(--font-plex), system-ui, sans-serif;
+}
+
+:lang(en) {
+  --font-sans: var(--font-plex), var(--font-plex-arabic), system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+  }
+}
