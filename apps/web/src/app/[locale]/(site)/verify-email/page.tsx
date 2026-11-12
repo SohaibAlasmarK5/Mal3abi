@@ -31,7 +31,7 @@ export default function VerifyEmailPage({ params }: Props) {
   const t = useTranslations("verifyEmail");
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-16">
+    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-4 py-16">
       <EmptyState
         icon={MailCheck}
         title={t("title")}
@@ -42,6 +42,6 @@ export default function VerifyEmailPage({ params }: Props) {
           </Button>
         }
       />
-    </main>
+    </div>
   );
 }

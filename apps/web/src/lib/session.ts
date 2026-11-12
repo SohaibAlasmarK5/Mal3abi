@@ -1,6 +1,6 @@
 "use client";
 
-import { logout, useGetMe, type Account, type Role } from "@mal3abi/shared/api";
+import { logout, useGetMe, type Account } from "@mal3abi/shared/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
@@ -24,11 +24,7 @@ export function useSession(): Session {
   return { status: "signedOut", account: null };
 }
 
-/** Admins can see everything; other roles see only their own areas. */
-export function hasRole(account: Account | null, ...roles: Role[]): boolean {
-  if (!account) return false;
-  return account.role === "admin" || roles.includes(account.role);
-}
+export { hasRole } from "./roles";
 
 export function useSignIn() {
   return useCallback((returnTo?: string) => window.location.assign(signInUrl(returnTo)), []);
