@@ -1,12 +1,13 @@
 import { z } from "zod";
 
 const schema = z.object({
-  NEXT_PUBLIC_API_BASE_URL: z.url(),
+  /** Mal3abi.BE origin. Server-only: the browser calls /api on this site, which proxies here. */
+  API_BASE_URL: z.url().default("https://localhost:7082"),
   NEXT_PUBLIC_SITE_URL: z.url().default("http://localhost:3000"),
 });
 
-/** Public, validated environment. Fails early when a value is missing or malformed. */
+/** Server environment, validated. Import only from server code (layouts, next.config). */
 export const env = schema.parse({
-  NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  API_BASE_URL: process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL,
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
 });

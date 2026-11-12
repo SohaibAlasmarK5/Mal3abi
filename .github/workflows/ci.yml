@@ -16,10 +16,15 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Generated API client is up to date with the contract
+        run: |
+          pnpm gen:api
+          git diff --exit-code -- packages/shared/src/api/generated
       - run: pnpm format:check
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test
       - run: pnpm build
         env:
-          NEXT_PUBLIC_API_BASE_URL: https://api.staging.example.invalid
+          API_BASE_URL: https://api.staging.example.invalid
+          NEXT_PUBLIC_API_MOCKING: disabled

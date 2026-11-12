@@ -7,6 +7,8 @@
     ".": "./src/index.ts",
     "./i18n": "./src/i18n/index.ts",
     "./messages/*": "./src/i18n/messages/*",
+    "./api": "./src/api/index.ts",
+    "./api/mocks": "./src/api/mocks/index.ts",
     "./tokens": "./src/tokens/index.ts",
     "./tokens/theme.css": "./src/tokens/theme.css"
   },
@@ -14,13 +16,19 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "gen:tokens": "node scripts/gen-tokens.ts"
+    "gen:tokens": "node scripts/gen-tokens.ts",
+    "gen:api": "orval --config ./orval.config.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "eslint": "^9.36.0",
+    "orval": "^8.47.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0",
     "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.107.1",
+    "msw": "^2.15.0"
   }
 }

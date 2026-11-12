@@ -28,6 +28,7 @@ export default function HomePage({ params }: Props) {
         <div className="mt-4 flex flex-col items-start">
           {(
             [
+              ["/dev/api", t("apiLink")],
               ["/dev/components", t("componentsLink")],
               ["/dev/i18n", t("reviewLink")],
             ] as const

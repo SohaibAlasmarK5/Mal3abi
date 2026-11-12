@@ -6,9 +6,10 @@
   "home": {
     "title": "Mal3abi",
     "subtitle": "Find an available court and book it in a few steps.",
-    "status": "The design system is ready. Next: connecting to the API.",
+    "status": "The API connection is ready on mock data. Next: the site frame.",
     "reviewLink": "Language review page",
-    "componentsLink": "Component review page"
+    "componentsLink": "Component review page",
+    "apiLink": "API review page"
   },
   "common": {
     "close": "Close",
@@ -150,5 +151,72 @@
     "emptyDescription": "When you book a court, it shows up here.",
     "findCourt": "Find a court",
     "home": "Home"
+  },
+  "errors": {
+    "network": "We could not reach the server. Check your internet connection and try again.",
+    "unauthorized": "Your session has ended. Please sign in again.",
+    "emailNotVerified": "Confirm your email first to continue.",
+    "forbidden": "You do not have permission to do this.",
+    "csrf": "This page has expired. Refresh it and try again.",
+    "notFound": "We could not find what you are looking for.",
+    "validation": "Some details are not valid. Check them and try again.",
+    "slotTaken": "This slot was booked moments ago. Choose another time.",
+    "bookingLimit": "You already have two upcoming bookings, the maximum. Cancel one to book again.",
+    "accountSuspended": "Your account is suspended. Contact the Mal3abi team.",
+    "server": "Something went wrong on the server. Try again shortly.",
+    "unknown": "Something unexpected happened. Try again."
+  },
+  "session": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signedInAs": "Signed in as {name}",
+    "signedOut": "Not signed in",
+    "role": {
+      "player": "Player",
+      "owner": "Court owner",
+      "admin": "Admin"
+    }
+  },
+  "verifyEmail": {
+    "metaTitle": "Confirm your email",
+    "title": "Confirm your email",
+    "body": "We sent a six-digit code to your email. Enter it on the confirmation page to book courts and add courts.",
+    "back": "Go back"
+  },
+  "devSignIn": {
+    "metaTitle": "Mock sign-in",
+    "title": "Mock sign-in",
+    "intro": "The data is mock data for now. Choose the account you want to try the site with.",
+    "roles": {
+      "anonymous": "Visitor (signed out)",
+      "player": "Player",
+      "playerUnverified": "Player with unconfirmed email",
+      "owner": "Court owner",
+      "admin": "Admin"
+    }
+  },
+  "devApi": {
+    "metaTitle": "API connection review",
+    "title": "API connection review",
+    "intro": "Internal page using the client generated from the API contract, on mock data.",
+    "session": "Session",
+    "sports": "Sports (from the database)",
+    "allSports": "All sports",
+    "courts": "Courts",
+    "courtsCount": "Courts: {count}",
+    "from": "From {price}",
+    "availability": "Available times at {court}",
+    "pickCourt": "Choose a court to see its times.",
+    "book": "Book one hour",
+    "booked": "Booked: {court}, {time}",
+    "myBookings": "My bookings",
+    "cancel": "Cancel",
+    "signInToSee": "Sign in to see your bookings.",
+    "slot": {
+      "available": "Available",
+      "requested": "Requested",
+      "booked": "Booked",
+      "closed": "Closed"
+    }
   }
 }

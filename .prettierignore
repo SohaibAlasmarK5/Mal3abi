@@ -4,3 +4,4 @@ node_modules
 coverage
 dist
 packages/shared/src/tokens/theme.css
+packages/shared/src/api/generated

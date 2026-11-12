@@ -10,6 +10,23 @@ export default defineConfig([
   globalIgnores([".next/**", "next-env.d.ts", "coverage/**"]),
   {
     rules: {
+      // Backend calls only through the generated client in @mal3abi/shared/api.
+      "no-restricted-globals": [
+        "error",
+        {
+          name: "fetch",
+          message: "Call the backend through the generated hooks in @mal3abi/shared/api.",
+        },
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            { name: "axios", message: "Use the generated client in @mal3abi/shared/api." },
+            { name: "ky", message: "Use the generated client in @mal3abi/shared/api." },
+          ],
+        },
+      ],
       // No raw UI text in JSX: every string comes from the ar/en message files.
       "react/jsx-no-literals": [
         "error",
