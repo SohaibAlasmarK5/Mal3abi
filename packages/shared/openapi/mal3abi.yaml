@@ -1,0 +1,483 @@
+openapi: 3.1.0
+info:
+  title: Mal3abi API
+  version: 0.1.0-draft
+  description: >
+    TEMPORARY contract written by the website team from docs/reference.html, so the UI can be
+    built on mock data before Mal3abi.BE publishes its own OpenAPI file. Replace this file with
+    the backend's swagger.json when it exists, then run `pnpm gen:api`.
+
+    Auth paths, the session cookie, the CSRF header (X-CSRF-TOKEN, token from GET /api/auth/csrf)
+    and the `email_not_verified` error code match the current Mal3abi.BE.
+
+    Errors use application/problem+json with a machine-readable `code`.
+servers:
+  - url: /
+tags:
+  - name: auth
+  - name: catalog
+  - name: courts
+  - name: bookings
+
+paths:
+  /api/auth/me:
+    get:
+      tags: [auth]
+      operationId: getMe
+      summary: The signed-in account. 401 when nobody is signed in.
+      responses:
+        "200":
+          description: Signed in
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Account" }
+        "401": { $ref: "#/components/responses/Problem" }
+
+  /api/auth/csrf:
+    get:
+      tags: [auth]
+      operationId: getCsrfToken
+      summary: Issues the CSRF token (also set as the readable XSRF-TOKEN cookie).
+      responses:
+        "200":
+          description: Token
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [token]
+                properties:
+                  token: { type: string }
+
+  /api/auth/logout:
+    post:
+      tags: [auth]
+      operationId: logout
+      responses:
+        "204": { description: Signed out }
+        default: { $ref: "#/components/responses/Problem" }
+
+  /api/sports:
+    get:
+      tags: [catalog]
+      operationId: listSports
+      summary: Active sports, managed by admins. Never hard-code sports in the UI.
+      responses:
+        "200":
+          description: Sports in display order
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Sport" }
+
+  /api/locations:
+    get:
+      tags: [catalog]
+      operationId: listCities
+      summary: Cities with their areas.
+      responses:
+        "200":
+          description: Cities
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/City" }
+
+  /api/courts:
+    get:
+      tags: [courts]
+      operationId: searchCourts
+      summary: Courts with at least one pitch available for the filters.
+      parameters:
+        - { name: sportId, in: query, schema: { type: string } }
+        - { name: cityId, in: query, schema: { type: string } }
+        - { name: areaId, in: query, schema: { type: string } }
+        - { name: date, in: query, schema: { type: string, format: date } }
+        - { name: from, in: query, description: "Start time HH:mm", schema: { type: string } }
+        - {
+            name: durationMinutes,
+            in: query,
+            schema: { $ref: "#/components/schemas/DurationMinutes" },
+          }
+        - { name: maxPrice, in: query, schema: { type: number } }
+        - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+        - {
+            name: pageSize,
+            in: query,
+            schema: { type: integer, minimum: 1, maximum: 50, default: 12 },
+          }
+      responses:
+        "200":
+          description: A page of courts
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CourtPage" }
+        default: { $ref: "#/components/responses/Problem" }
+
+  /api/courts/{courtId}:
+    get:
+      tags: [courts]
+      operationId: getCourt
+      parameters:
+        - { name: courtId, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Court details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CourtDetail" }
+        "404": { $ref: "#/components/responses/Problem" }
+
+  /api/courts/{courtId}/availability:
+    get:
+      tags: [courts]
+      operationId: getCourtAvailability
+      parameters:
+        - { name: courtId, in: path, required: true, schema: { type: string } }
+        - { name: date, in: query, required: true, schema: { type: string, format: date } }
+        - { name: pitchId, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Half-hour slots for the day, per pitch
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AvailabilitySlot" }
+        "404": { $ref: "#/components/responses/Problem" }
+
+  /api/bookings/my:
+    get:
+      tags: [bookings]
+      operationId: listMyBookings
+      parameters:
+        - { name: status, in: query, schema: { $ref: "#/components/schemas/BookingStatus" } }
+      responses:
+        "200":
+          description: The signed-in player's bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Booking" }
+        "401": { $ref: "#/components/responses/Problem" }
+
+  /api/bookings:
+    post:
+      tags: [bookings]
+      operationId: createBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateBookingRequest" }
+      responses:
+        "201":
+          description: Booked (instant) or requested (court needs approval)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Booking" }
+        "401": { $ref: "#/components/responses/Problem" }
+        "403": { $ref: "#/components/responses/Problem" }
+        "409": { $ref: "#/components/responses/Problem" }
+        "422": { $ref: "#/components/responses/Problem" }
+
+  /api/bookings/{bookingId}/cancel:
+    post:
+      tags: [bookings]
+      operationId: cancelBooking
+      parameters:
+        - { name: bookingId, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Cancelled
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Booking" }
+        default: { $ref: "#/components/responses/Problem" }
+
+components:
+  responses:
+    Problem:
+      description: Error
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problem" }
+
+  schemas:
+    Problem:
+      type: object
+      required: [status, code]
+      properties:
+        status: { type: integer }
+        code: { $ref: "#/components/schemas/ErrorCode" }
+        title: { type: string }
+        detail: { type: string }
+        errors:
+          description: Field errors, keyed by field name
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+
+    ErrorCode:
+      type: string
+      enum:
+        - unauthorized
+        - email_not_verified
+        - forbidden
+        - csrf_invalid
+        - not_found
+        - validation_failed
+        - slot_taken
+        - booking_limit_reached
+        - account_suspended
+        - server_error
+
+    LocalizedText:
+      description: Text stored in both languages. The UI falls back to the other language.
+      type: object
+      properties:
+        ar: { type: [string, "null"] }
+        en: { type: [string, "null"] }
+
+    Role:
+      type: string
+      enum: [player, owner, admin]
+
+    Account:
+      type: object
+      required: [id, name, username, email, phone, role, emailConfirmed, twoFactorEnabled]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        username: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string }
+        photoUrl: { type: [string, "null"] }
+        role: { $ref: "#/components/schemas/Role" }
+        emailConfirmed: { type: boolean }
+        twoFactorEnabled: { type: boolean }
+
+    Sport:
+      type: object
+      required: [id, name, icon, sortOrder, defaultPlayers, defaultDurationMinutes]
+      properties:
+        id: { type: string }
+        name: { $ref: "#/components/schemas/LocalizedText" }
+        icon: { type: string, description: "Icon key chosen by admins" }
+        sortOrder: { type: integer }
+        defaultPlayers: { type: integer }
+        defaultDurationMinutes: { $ref: "#/components/schemas/DurationMinutes" }
+
+    Area:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string }
+        name: { $ref: "#/components/schemas/LocalizedText" }
+
+    City:
+      type: object
+      required: [id, name, areas]
+      properties:
+        id: { type: string }
+        name: { $ref: "#/components/schemas/LocalizedText" }
+        areas:
+          type: array
+          items: { $ref: "#/components/schemas/Area" }
+
+    GeoPoint:
+      type: object
+      required: [lat, lng]
+      properties:
+        lat: { type: number }
+        lng: { type: number }
+
+    Rating:
+      type: object
+      required: [average, count]
+      properties:
+        average: { type: number, minimum: 0, maximum: 5 }
+        count: { type: integer }
+
+    PaymentMethod:
+      type: string
+      enum: [cliq, cash, visa]
+
+    SocialPlatform:
+      type: string
+      enum: [instagram, facebook, whatsapp, tiktok, youtube, snapchat, website]
+
+    SocialLink:
+      type: object
+      required: [platform, url]
+      properties:
+        platform: { $ref: "#/components/schemas/SocialPlatform" }
+        url: { type: string }
+
+    DurationMinutes:
+      description: One to three hours, in half-hour steps.
+      type: integer
+      enum: [60, 90, 120, 150, 180]
+
+    Pitch:
+      type: object
+      required: [id, name, sportId, minDurationMinutes, maxDurationMinutes]
+      properties:
+        id: { type: string }
+        name: { $ref: "#/components/schemas/LocalizedText" }
+        sportId: { type: string }
+        surface: { type: [string, "null"] }
+        size: { type: [string, "null"] }
+        minDurationMinutes: { $ref: "#/components/schemas/DurationMinutes" }
+        maxDurationMinutes: { $ref: "#/components/schemas/DurationMinutes" }
+
+    CourtSummary:
+      type: object
+      required:
+        [
+          id,
+          name,
+          cityId,
+          areaId,
+          location,
+          sportIds,
+          pitchCount,
+          priceFrom,
+          rating,
+          isFeatured,
+          needsApproval,
+        ]
+      properties:
+        id: { type: string }
+        name: { $ref: "#/components/schemas/LocalizedText" }
+        cityId: { type: string }
+        areaId: { type: string }
+        location: { $ref: "#/components/schemas/GeoPoint" }
+        coverPhotoUrl: { type: [string, "null"] }
+        sportIds:
+          type: array
+          items: { type: string }
+        pitchCount: { type: integer }
+        priceFrom: { type: number, description: "Lowest hourly price in JOD" }
+        rating: { $ref: "#/components/schemas/Rating" }
+        isFeatured: { type: boolean }
+        needsApproval: { type: boolean }
+
+    CourtPage:
+      type: object
+      required: [items, page, pageSize, total]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/CourtSummary" }
+        page: { type: integer }
+        pageSize: { type: integer }
+        total: { type: integer }
+
+    CourtDetail:
+      allOf:
+        - { $ref: "#/components/schemas/CourtSummary" }
+        - type: object
+          required:
+            [
+              phone,
+              address,
+              photos,
+              paymentMethods,
+              requiresPrepayment,
+              cancellationPolicy,
+              socialLinks,
+              pitches,
+            ]
+          properties:
+            phone: { type: string }
+            address: { $ref: "#/components/schemas/LocalizedText" }
+            photos:
+              type: array
+              items: { type: string }
+            paymentMethods:
+              type: array
+              items: { $ref: "#/components/schemas/PaymentMethod" }
+            requiresPrepayment: { type: boolean }
+            cancellationPolicy: { $ref: "#/components/schemas/LocalizedText" }
+            socialLinks:
+              type: array
+              items: { $ref: "#/components/schemas/SocialLink" }
+            pitches:
+              type: array
+              items: { $ref: "#/components/schemas/Pitch" }
+
+    SlotStatus:
+      type: string
+      enum: [available, requested, booked, closed]
+
+    AvailabilitySlot:
+      type: object
+      required: [pitchId, start, end, status]
+      properties:
+        pitchId: { type: string }
+        start: { type: string, format: date-time }
+        end: { type: string, format: date-time }
+        status: { $ref: "#/components/schemas/SlotStatus" }
+        pricePerHour: { type: [number, "null"] }
+
+    BookingStatus:
+      type: string
+      enum: [confirmed, pending, completed, cancelled, noShow, rejected, expired]
+
+    PricePart:
+      type: object
+      required: [start, end, amount]
+      properties:
+        start: { type: string, format: date-time }
+        end: { type: string, format: date-time }
+        amount: { type: number }
+
+    Booking:
+      type: object
+      required:
+        [
+          id,
+          courtId,
+          courtName,
+          pitchId,
+          pitchName,
+          start,
+          end,
+          status,
+          totalPrice,
+          priceBreakdown,
+          isOpenMatch,
+        ]
+      properties:
+        id: { type: string }
+        courtId: { type: string }
+        courtName: { $ref: "#/components/schemas/LocalizedText" }
+        pitchId: { type: string }
+        pitchName: { $ref: "#/components/schemas/LocalizedText" }
+        start: { type: string, format: date-time }
+        end: { type: string, format: date-time }
+        status: { $ref: "#/components/schemas/BookingStatus" }
+        totalPrice: { type: number }
+        priceBreakdown:
+          type: array
+          items: { $ref: "#/components/schemas/PricePart" }
+        isOpenMatch: { type: boolean }
+        missingPlayers: { type: [integer, "null"] }
+
+    CreateBookingRequest:
+      type: object
+      required: [pitchId, start, durationMinutes]
+      properties:
+        pitchId: { type: string }
+        start: { type: string, format: date-time }
+        durationMinutes: { $ref: "#/components/schemas/DurationMinutes" }
+        recurringWeekly: { type: boolean, default: false }
+        missingPlayers:
+          description: Opens the booking to other players when set.
+          type: [integer, "null"]
+          minimum: 1

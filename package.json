@@ -13,7 +13,8 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "gen:api": "pnpm --filter @mal3abi/shared gen:api"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

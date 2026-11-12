@@ -15,6 +15,7 @@ This repo was rebuilt from scratch on branch `KAN-5-project-setup`. The old Vite
 - `pnpm install`
 - `pnpm dev`: web app on http://localhost:3000 (redirects to `/ar`). On Windows PowerShell use `pnpm.cmd`.
 - `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm format`
+- `pnpm gen:api`: regenerate the API client from the OpenAPI contract
 - Env: copy `apps/web/.env.example` to `apps/web/.env.local`. No secrets in the code or in `NEXT_PUBLIC_` variables.
 
 CI (`.github/workflows/ci.yml`) runs format check, typecheck, lint, test and build on every pull request.
@@ -37,8 +38,13 @@ CI (`.github/workflows/ci.yml`) runs format check, typecheck, lint, test and bui
 - **Components:** use the ones in `apps/web/src/components/ui` (button, input/field, select, checkbox, tabs, dialog, alert, card, status-badge, table, calendar, time-picker, image-upload, states) instead of new one-off styles. Review page: `/ar/dev/components` (development only).
 - **Numbers in messages:** pass numbers to `t()` as strings (`String(n)`), because ICU number arguments would print Arabic-Indic digits.
 - **Shape:** 10px radius on buttons and inputs (`rounded-control`), 14-16px on cards (`rounded-card`), 1px borders, no shadows or gradients, controls at least 44px tall (`h-control`).
-- **Data:** every backend call goes through the client generated from the Mal3abi.BE OpenAPI contract (TanStack Query). No hand-written fetch calls. MSW mock data until the contract exists.
-- **Sessions:** HttpOnly cookie from the backend; the website stores no tokens. Send the CSRF token on every request that changes data.
+- **Data:** every backend call goes through the client generated from the OpenAPI contract: TanStack Query hooks from `@mal3abi/shared/api` (for example `useSearchCourts`, `useCreateBooking`). ESLint blocks `fetch` and axios in app code.
+  - Contract: `packages/shared/openapi/mal3abi.yaml`. It is a **temporary** contract written from the product reference until Mal3abi.BE publishes its own; then replace the file with the backend's swagger.json. After any change run `pnpm gen:api` (orval) and commit `packages/shared/src/api/generated`. CI fails if it is out of date; never edit generated files.
+  - All requests pass through `packages/shared/src/api/fetcher.ts` (`apiFetch`). The web app configures it in `apps/web/src/lib/api.ts`.
+  - The browser calls `/api/...` on this site; `next.config.ts` proxies it to `API_BASE_URL` (Mal3abi.BE), so the session cookie stays first-party.
+  - Mock data: `NEXT_PUBLIC_API_MOCKING=enabled` answers requests in the browser from `packages/shared/src/api/mocks` (MSW handlers, no service worker). The data is typed with the generated types, so contract changes break the build there too. Switch the mock account at `/ar/dev/sign-in`; review page `/ar/dev/api`.
+- **Sessions:** HttpOnly cookie from the backend; the website stores no tokens. `useSession()`, `useSignIn()`, `useSignOut()`, `hasRole()` from `@/lib/session`. The CSRF token (cookie `XSRF-TOKEN`, or `GET /api/auth/csrf`) is sent as `X-CSRF-TOKEN` on every request that changes data, and refreshed once on `csrf_invalid`.
+- **Errors:** the API throws `ApiError` with a stable `code`. 401 (except `/api/auth/me`) sends the user to sign-in and back; `email_not_verified` goes to `/[locale]/verify-email`; everything else shows `useErrorMessage()(error)` from `@/lib/api-errors` in the user's language. Never show the backend's English text.
 - **Forms:** react-hook-form + zod. UI validation is always also enforced on the server.
 - **Sports are never hard-coded:** they come from the admin-managed list in the database.
 - **Maps:** Google Maps, loaded only when the user taps "Show map".
