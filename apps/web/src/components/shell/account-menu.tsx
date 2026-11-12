@@ -42,7 +42,7 @@ export function AccountMenu({ className }: { className?: string }) {
 
   if (session.status === "loading") return <Skeleton className={cn("h-control w-28", className)} />;
 
-  if (session.status === "signedOut") {
+  if (session.status !== "signedIn") {
     return (
       <Button className={className} onClick={() => signIn()}>
         {tSession("signIn")}

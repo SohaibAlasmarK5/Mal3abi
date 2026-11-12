@@ -3,7 +3,8 @@
 import type { Role } from "@mal3abi/shared/api";
 import { useTranslations } from "next-intl";
 import { useEffect, type ReactNode } from "react";
-import { LoadingState } from "@/components/ui/states";
+import { Button } from "@/components/ui/button";
+import { ErrorState, LoadingState } from "@/components/ui/states";
 import { hasRole, useSession, useSignIn } from "@/lib/session";
 import { NotAuthorized } from "./not-authorized";
 
@@ -19,6 +20,8 @@ type Props = {
  */
 export function RequireRole({ roles = [], children }: Props) {
   const t = useTranslations("shell");
+  const tCommon = useTranslations("common");
+  const tErrors = useTranslations("errors");
   const session = useSession();
   const signIn = useSignIn();
 
@@ -29,6 +32,21 @@ export function RequireRole({ roles = [], children }: Props) {
   if (session.status === "loading") return <LoadingState className="m-4 border-0" />;
   if (session.status === "signedOut")
     return <LoadingState label={t("redirecting")} className="m-4 border-0" />;
+  if (session.status === "error") {
+    // The backend is unreachable: say so instead of sending the user to sign in.
+    return (
+      <div className="mx-auto w-full max-w-xl px-4 py-16">
+        <ErrorState
+          description={tErrors("network")}
+          action={
+            <Button variant="secondary" onClick={session.retry}>
+              {tCommon("retry")}
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
   if (roles.length > 0 && !hasRole(session.account, ...roles)) return <NotAuthorized />;
   return children;
 }

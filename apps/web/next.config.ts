@@ -3,8 +3,12 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
-const apiBaseUrl =
-  process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://localhost:7082";
+const configuredApiBaseUrl = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+if (!configuredApiBaseUrl && process.env.NODE_ENV === "production") {
+  // Fail the build instead of silently proxying /api to localhost in production.
+  throw new Error("Set API_BASE_URL to the Mal3abi.BE origin for production builds.");
+}
+const apiBaseUrl = configuredApiBaseUrl ?? "https://localhost:7082";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
