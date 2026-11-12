@@ -1,12 +1,34 @@
 {
   "meta": {
-    "title": "Mal3abi",
+    "siteName": "Mal3abi",
     "description": "Book a football or padel court in Jordan in a few steps."
   },
   "home": {
     "title": "Mal3abi",
     "subtitle": "Find an available court and book it in a few steps.",
-    "status": "The project is ready. Next: languages and the design system.",
-    "switchLanguage": "العربية"
+    "status": "Both languages are ready. Next: the design system.",
+    "reviewLink": "Language review page"
+  },
+  "localeSwitcher": {
+    "label": "العربية",
+    "ariaLabel": "Switch to Arabic"
+  },
+  "devI18n": {
+    "metaTitle": "Language review",
+    "title": "Language and direction review",
+    "intro": "Internal page to check formatting and direction in Arabic and English.",
+    "formatting": "Formatting",
+    "number": "Number",
+    "price": "Price",
+    "date": "Date",
+    "shortDate": "Short date",
+    "time": "Time",
+    "content": "Content from the database",
+    "bothLanguages": "Name in both languages",
+    "fallback": "Name in one language only (shown in the other)",
+    "direction": "Direction",
+    "next": "Next",
+    "back": "Back",
+    "home": "Home"
   }
 }
