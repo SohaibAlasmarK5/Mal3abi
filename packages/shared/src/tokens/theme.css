@@ -1,0 +1,53 @@
+/*
+ * Mal3abi theme tokens: the single source of the platform colors.
+ * Light mode = "green" theme, dark mode = "dark" theme (docs/ui-brief.md).
+ * The accent color is for buttons and primary actions only.
+ */
+:root {
+  --bg: #f5f7f4;
+  --surface: #ffffff;
+  --ink: #13201a;
+  --muted: #55635b;
+  --line: #dde3de;
+  --accent: #0e7a4b;
+  --accent-ink: #ffffff;
+  --accent-soft: #e3f2ea;
+  --accent-2: #c98a12;
+
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --control-height: 44px;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0e1316;
+  --surface: #172026;
+  --ink: #e9eef1;
+  --muted: #9ba8b2;
+  --line: #26313a;
+  --accent: #34c98a;
+  --accent-ink: #08140e;
+  --accent-soft: #13342a;
+  --accent-2: #e9b44c;
+
+  color-scheme: dark;
+}
+
+/* First visit, no saved choice yet: follow the system setting. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1316;
+    --surface: #172026;
+    --ink: #e9eef1;
+    --muted: #9ba8b2;
+    --line: #26313a;
+    --accent: #34c98a;
+    --accent-ink: #08140e;
+    --accent-soft: #13342a;
+    --accent-2: #e9b44c;
+
+    color-scheme: dark;
+  }
+}
