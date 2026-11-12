@@ -13,3 +13,6 @@ export function isLocale(value: string): value is Locale {
 export function directionOf(locale: Locale): Direction {
   return locale === "ar" ? "rtl" : "ltr";
 }
+
+export * from "./format";
+export * from "./localized";
